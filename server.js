@@ -1,9 +1,9 @@
-import express from 'express'
+const express = require('express')
 
 
 const app = express();
 
-const connection = require('./config/db')
+const connection = require('./config/db.js')
 connection.once('open', () => console.log('DB Connected'))
 connection.on('error', () => console.log('Error'))
 
@@ -13,7 +13,8 @@ app.use(express.json({
 })) //parse incoming request body in JSON format.
 app.use('/', require('./routes/redirect'))
 app.use('/api/url', require('./routes/url'))
-app.get(':code', async (req, res) => {
-  
-  // res.redirect()
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT, () => {
+  console.log('started server on prt' + PORT)
 })

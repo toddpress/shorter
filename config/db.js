@@ -1,4 +1,5 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
+
 
 const DB_URI = process.env.MAKESHIFT_WOOL
 

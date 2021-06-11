@@ -1,6 +1,6 @@
-import express from 'express'
-import validUrl from 'valid-url'
-import shortId from 'short-id'
+const express = require('express')
+const validUrl = require('valid-url')
+const shortId = require('short-id')
 
 import Url from './../models/UrlModel';
 const router = express.router();
