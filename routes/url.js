@@ -1,58 +1,46 @@
-const express = require('express')
-const validUrl = require('valid-url')
-const shortId = require('short-id')
+const express = require('express');
+const validUrl = require('valid-url');
+const shortId = require('short-id');
 
-import Url from './../models/UrlModel';
-const router = express.router();
+const Url = require('./../models/UrlModel');
+const router = express.Router();
 
-const baseUrl = 'https://capable-organic-archeology.glitch.me/';
+const baseUrl = 'https://capable-organic-archeology.glitch.me';
 
+router.post('/shorten', async (req, res) => {
+  const { longUrl } = req.body;
 
-router.post('/shorten', async (req, res)=> {
-  const {
-    longUrl
-  } = req.body;
-  
-    // check base url if valid using the validUrl.isUri method
+  // check base url if valid using the validUrl.isUri method
   if (!validUrl.isUri(baseUrl)) {
-      return res.status(401).json('Invalid base URL')
+    return res.status(401).json('Invalid base URL');
   }
-  
 
-  
-  if (validUrl.isUri(longUrl)) {
-    let url = await Url.findOne({
-      longUrl
-    })
-    
-    if (url) {
-      res.json(url)
-    } else {
-        try {
-          
-          const code = shortId.generate();
-          const shortUrl = [baseUrl, code].join('/')
-
-          url = new Url({
-            longUrl,
-            shortUrl,
-            code,
-            date: new Date()
-          })
-
-          await url.save()
-          res.json(url)
-        } catch(e) {
-          console.error(e);
-          res.status(500).json('Server Error')
-        }
-          
-    }
-  } else {
-    res.status(401).json('Invalid longUrl')
+  if (!validUrl.isUri(longUrl)) {
+    return res.status(401).json('Invalid longUrl');
   }
-  
+
+  let url = await Url.findOne({
+    longUrl,
+  });
+
+  if (url) {
+    return res.json(url);
+  }
+
+  try {
+    const code = shortId.generate();
+
+    url = new Url({
+      longUrl,
+      code,
+      date: new Date(),
+    });
+
+    await url.save();
+    return res.json(url);
+  } catch (e) {
+    return res.status(500).json('Server Error');
+  }
 });
 
-export default router;
-
+module.exports = router;

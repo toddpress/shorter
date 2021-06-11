@@ -8,14 +8,14 @@ router.get('/:code', async (req, res) => {
     const url = await Url.findOne({
       code: req.params.code
     })
-    if (url) {
-      res.redirect(url.longUrl)
-    } else {
-      res.status(404).json('URL not found')
+
+    if (!url) {
+      return res.status(404).json('URL not found')
     }
+    res.redirect(url.longUrl)
   } catch {
       res.status(500).json('Server Error')
   }
 })
 
-export default router;
+module.exports = router;
