@@ -28,16 +28,31 @@ router.post('/shorten', async (req, res)=> {
     if (url) {
       res.json(url)
     } else {
-        const code = shortId.generate();
-        const shortUrl = [baseUrl, code].join('/')
-        
-        url = new Url({
-          longUrl,
-          shortUrl,
+        try {
           
-        })
+          const code = shortId.generate();
+          const shortUrl = [baseUrl, code].join('/')
+
+          url = new Url({
+            longUrl,
+            shortUrl,
+            code,
+            date: new Date()
+          })
+
+          await url.save()
+          res.json(url)
+        } catch(e) {
+          console.error(e);
+          res.status(500).json('Server Error')
+        }
+          
     }
+  } else {
+    res.status(401).json('Invalid longUrl')
   }
   
 });
+
+export default router;
 
